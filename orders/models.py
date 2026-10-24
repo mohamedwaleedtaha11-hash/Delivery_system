@@ -55,7 +55,7 @@ class Order(models.Model):
         return self.status == 'pending'
 
 class OrderItem(models.Model):
-     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
      item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
      quantity = models.IntegerField()
      def __str__(self):
@@ -92,6 +92,13 @@ class DeliveryAssignment(models.Model):
             ('rejected', 'rejected'),
         )
     )
+
+    def can_be_accepted(self):
+        return self.status == 'pending'
+
+    def can_be_rejected(self):
+        return self.status == 'pending'
+
     def accept(self):
         if not self.can_be_accepted():
             raise ValidationError("This delivery assignment cannot be accepted.")
